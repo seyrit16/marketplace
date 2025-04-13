@@ -1,7 +1,7 @@
 package com.example.redis_service.service.impl;
 
-import com.example.redis_service.dto.kafka.request.RedisRequest;
-import com.example.redis_service.dto.kafka.response.RedisResponse;
+import com.example.kafka.dto.request.RedisRequest;
+import com.example.kafka.dto.response.RedisResponse;
 import com.example.redis_service.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
