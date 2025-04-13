@@ -1,4 +1,4 @@
-package com.example.redis_service.dto.kafka.response;
+package com.example.kafka.dto.response;
 
 import lombok.*;
 

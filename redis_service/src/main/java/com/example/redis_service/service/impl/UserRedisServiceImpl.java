@@ -1,7 +1,7 @@
 package com.example.redis_service.service.impl;
 
-import com.example.redis_service.dto.kafka.request.RedisRequest;
-import com.example.redis_service.dto.kafka.response.RedisResponse;
+import com.example.kafka.dto.request.RedisRequest;
+import com.example.kafka.dto.response.RedisResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -10,6 +10,8 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Service
 public class UserRedisServiceImpl<T> extends RedisServiceImpl<Object> {
@@ -23,6 +25,7 @@ public class UserRedisServiceImpl<T> extends RedisServiceImpl<Object> {
     @KafkaListener(topics = "user-topic-save", groupId = "redis-group")
     void handleSave(@Payload RedisRequest request, @Header(KafkaHeaders.RECEIVED_KEY) String key) {
         try{
+            System.out.println(request);
             save(request.getKey(),
                     request.getValue(),
                     request.getTimeout(),
@@ -34,7 +37,9 @@ public class UserRedisServiceImpl<T> extends RedisServiceImpl<Object> {
                             .key(key)
                             .value(null)
                             .success(true)
-                            .error(null));
+                            .error(null)
+                            .build()
+            );
         }catch (Exception exception){
             kafkaTemplate.send("redis-response-topic", key,
                     RedisResponse.builder()
@@ -43,7 +48,9 @@ public class UserRedisServiceImpl<T> extends RedisServiceImpl<Object> {
                             .key(key)
                             .value(null)
                             .success(false)
-                            .error(exception.getMessage()));
+                            .error(Arrays.toString(exception.getStackTrace()))
+                            .build());
+            exception.printStackTrace();
         }
     }
 
@@ -55,20 +62,22 @@ public class UserRedisServiceImpl<T> extends RedisServiceImpl<Object> {
             kafkaTemplate.send("redis-response-topic", key,
                     RedisResponse.builder()
                             .correlationId(request.getCorrelationId())
-                            .operation("save")
+                            .operation("get")
                             .key(key)
                             .value(value)
                             .success(true)
-                            .error(null));
+                            .error(null)
+                            .build());
         }catch (Exception exception){
             kafkaTemplate.send("redis-response-topic", key,
                     RedisResponse.builder()
                             .correlationId(request.getCorrelationId())
-                            .operation("save")
+                            .operation("get")
                             .key(key)
                             .value(null)
                             .success(false)
-                            .error(exception.getMessage()));
+                            .error(exception.getMessage())
+                            .build());
         }
     }
 
@@ -80,20 +89,22 @@ public class UserRedisServiceImpl<T> extends RedisServiceImpl<Object> {
             kafkaTemplate.send("redis-response-topic", key,
                     RedisResponse.builder()
                             .correlationId(request.getCorrelationId())
-                            .operation("save")
+                            .operation("exists")
                             .key(key)
                             .value(value)
                             .success(true)
-                            .error(null));
+                            .error(null)
+                            .build());
         }catch (Exception exception){
             kafkaTemplate.send("redis-response-topic", key,
                     RedisResponse.builder()
                             .correlationId(request.getCorrelationId())
-                            .operation("save")
+                            .operation("exists")
                             .key(key)
                             .value(null)
                             .success(false)
-                            .error(exception.getMessage()));
+                            .error(exception.getMessage())
+                            .build());
         }
     }
 
@@ -105,20 +116,22 @@ public class UserRedisServiceImpl<T> extends RedisServiceImpl<Object> {
             kafkaTemplate.send("redis-response-topic", key,
                     RedisResponse.builder()
                             .correlationId(request.getCorrelationId())
-                            .operation("save")
+                            .operation("delete")
                             .key(key)
                             .value(null)
                             .success(true)
-                            .error(null));
+                            .error(null)
+                            .build());
         }catch(Exception exception){
             kafkaTemplate.send("redis-response-topic", key,
                     RedisResponse.builder()
                             .correlationId(request.getCorrelationId())
-                            .operation("save")
+                            .operation("delete")
                             .key(key)
                             .value(null)
                             .success(false)
-                            .error(exception.getMessage()));
+                            .error(exception.getMessage())
+                            .build());
         }
     }
 
@@ -130,20 +143,22 @@ public class UserRedisServiceImpl<T> extends RedisServiceImpl<Object> {
             kafkaTemplate.send("redis-response-topic", key,
                     RedisResponse.builder()
                             .correlationId(request.getCorrelationId())
-                            .operation("save")
+                            .operation("save-to-hash")
                             .key(key)
                             .value(null)
                             .success(true)
-                            .error(null));
+                            .error(null)
+                            .build());
         }catch (Exception exception){
             kafkaTemplate.send("redis-response-topic", key,
                     RedisResponse.builder()
                             .correlationId(request.getCorrelationId())
-                            .operation("save")
+                            .operation("save-to-hash")
                             .key(key)
                             .value(null)
                             .success(false)
-                            .error(exception.getMessage()));
+                            .error(exception.getMessage())
+                            .build());
         }
     }
 
@@ -155,20 +170,22 @@ public class UserRedisServiceImpl<T> extends RedisServiceImpl<Object> {
             kafkaTemplate.send("redis-response-topic", key,
                     RedisResponse.builder()
                             .correlationId(request.getCorrelationId())
-                            .operation("save")
+                            .operation("get-from-hash")
                             .key(key)
                             .value(value)
                             .success(true)
-                            .error(null));
+                            .error(null)
+                            .build());
         }catch (Exception exception){
             kafkaTemplate.send("redis-response-topic", key,
                     RedisResponse.builder()
                             .correlationId(request.getCorrelationId())
-                            .operation("save")
+                            .operation("get-from-hash")
                             .key(key)
                             .value(null)
                             .success(false)
-                            .error(exception.getMessage()));
+                            .error(exception.getMessage())
+                            .build());
         }
     }
 }
