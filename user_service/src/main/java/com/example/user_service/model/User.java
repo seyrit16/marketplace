@@ -3,11 +3,13 @@ package com.example.user_service.model;
 import com.example.user_service.invariant.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,8 +21,8 @@ import java.util.List;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
     @Column(name = "email", nullable = false)
     private String email;
@@ -37,14 +39,15 @@ public class User {
     @Column(name = "patronymic")
     private String patronymic;
 
-    @Column(name = "phoneNumber")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "created_at")
+    @CreationTimestamp
+    @Column(name = "created_at",nullable = false)
     @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm")
     private LocalDateTime createdAt;
 
@@ -60,7 +63,7 @@ public class User {
     @Column(name = "default_pickup_point_id")
     private Long defaultPickupPointId;
 
-    private void addCard(Card card) {
+    public void addCard(Card card) {
         this.cards.add(card);
     }
 }
