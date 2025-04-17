@@ -22,33 +22,31 @@ public class AuthenticationController {
     }
 
     @PostMapping("/send_code")
-    public ResponseEntity<Response<?>> sendCode(@RequestParam(name = "email") String email) {
+    public ResponseEntity<Void> sendCode(@RequestParam(name = "email") String email) {
         authenticationService.sendVerificationCode(email);
-        return ResponseEntity.status(HttpStatus.OK).body(Response.SUCCESS);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/sign_up/user")
-    public ResponseEntity<Response<?>> signUpUser(@RequestBody SignUpRequest requestData) {
+    public ResponseEntity<Void> signUpUser(@RequestBody SignUpRequest requestData) {
 
         authenticationService.signUpUser(requestData);
-        return ResponseEntity.status(HttpStatus.OK).body(Response.SUCCESS);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/sign_in/with_code/user")
-    public ResponseEntity<Response<JwtTokenResponse>> signInWithCodeUser(@RequestBody SignInWithCodeRequest requestData) {
+    public ResponseEntity<JwtTokenResponse> signInWithCodeUser(@RequestBody SignInWithCodeRequest requestData) {
 
         String token = authenticationService.signInWithCode(requestData.getEmail(), requestData.getCode());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Response
-                        .of(new JwtTokenResponse(token)));
+                .body(new JwtTokenResponse(token));
     }
 
     @PostMapping("/sign_in/with_password/user")
-    public ResponseEntity<Response<JwtTokenResponse>> signInWithPasswordUser(@RequestBody SignInWithPasswordRequest requestData) {
+    public ResponseEntity<JwtTokenResponse> signInWithPasswordUser(@RequestBody SignInWithPasswordRequest requestData) {
 
         String token = authenticationService.signInWithPassword(requestData.getEmail(), requestData.getPassword());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Response
-                        .of(new JwtTokenResponse(token)));
+                .body(new JwtTokenResponse(token));
     }
 }
