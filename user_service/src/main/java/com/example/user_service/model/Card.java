@@ -2,6 +2,9 @@ package com.example.user_service.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -40,6 +43,8 @@ public class Card {
     @Column(name = "is_default", nullable = false)
     private Boolean isDefault;
 
-    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm")
+    @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
 }
