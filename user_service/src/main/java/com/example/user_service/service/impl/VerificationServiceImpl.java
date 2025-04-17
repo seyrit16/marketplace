@@ -86,7 +86,7 @@ public class VerificationServiceImpl implements VerificationService {
             responseFutures.remove(correlationId);
 
 
-            if (Optional.of(response.getValue()).isEmpty()) {
+            if (Optional.ofNullable(response.getValue()).isEmpty()) {
                 return false;
             }
             if (!response.isSuccess()) {
@@ -100,7 +100,7 @@ public class VerificationServiceImpl implements VerificationService {
             throw new VerificationServiceWorkException(verificationServiceWorkException.getMessage());
         } catch (Exception exception) {
             responseFutures.remove(correlationId);
-            throw new RuntimeException("Failed to save verification code: " +
+            throw new RuntimeException("Failed to verify verification code: " +
                     (exception.getMessage() != null ? exception.getMessage() : exception.toString()), exception);
         }
     }
@@ -130,7 +130,7 @@ public class VerificationServiceImpl implements VerificationService {
             throw new VerificationServiceWorkException(verificationServiceWorkException.getMessage());
         } catch (Exception exception) {
             responseFutures.remove(correlationId);
-            throw new RuntimeException("Failed to save verification code: " +
+            throw new RuntimeException("Failed to delete verification code: " +
                     (exception.getMessage() != null ? exception.getMessage() : exception.toString()), exception);
         }
     }
