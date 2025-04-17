@@ -2,45 +2,57 @@ package com.example.user_service.config.security.components;
 
 import com.example.user_service.dto.UserDTO;
 import com.example.user_service.invariant.Role;
+import com.example.user_service.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 public class CustomUserDetails implements UserDetails {
-    private final UserDTO user;
+    //private final UserDTO user;
 
-    public CustomUserDetails(UserDTO user) {
-        this.user = user;
+    private final UUID id;
+    private String email;
+    private String password;
+    private Role role;
+    private Boolean isActive;
+    private Boolean isLocked;
+
+    public CustomUserDetails(User user) {
+
+        this.id = user.getId();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.role = user.getRole();
+        this.isActive = user.getIsActive();
+        this.isLocked = user.getIsLocked();
+
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
+        return Collections.singletonList(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return email;
     }
 
-    public Long getId() {
-        return user.getId();
+    public UUID getId() {
+        return id;
     }
 
     public Role getRole() {
-        return user.getRole();
-    }
-
-    public Long getDefaultPickupPointId() {
-        return user.getDefaultPickupPointId();
+        return role;
     }
 
     @Override
@@ -50,7 +62,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !user.getIsLocked();
+        return !isLocked;
     }
 
     @Override
@@ -60,10 +72,10 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.getIsActive();
+        return isActive;
     }
 
     public Boolean isAdmin() {
-        return user.getRole().equals(Role.ADMIN);
+        return role.equals(Role.ADMIN);
     }
 }
