@@ -44,6 +44,7 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
     public User signUpUser(SignUpRequest dto) {
 
         checkIsValidCodeByEmail(dto.getEmail(), dto.getVerifyCode());
+        verificationService.deleteCode(dto.getEmail());
         return userService.register(dto);
     }
 

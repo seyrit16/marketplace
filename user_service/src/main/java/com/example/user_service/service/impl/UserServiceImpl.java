@@ -1,9 +1,8 @@
 package com.example.user_service.service.impl;
 
 import com.example.user_service.config.security.components.CustomUserDetails;
-import com.example.user_service.config.security.components.JwtData;
 import com.example.user_service.dto.auth.request.SignUpRequest;
-import com.example.user_service.dto.response.UserResponse;
+import com.example.user_service.dto.response.user.UserResponse;
 import com.example.user_service.dto.request.user.UserUpdatePasswordRequest;
 import com.example.user_service.dto.request.user.UserUpdateRequest;
 import com.example.user_service.exception.PasswordIsMissingException;
@@ -17,12 +16,15 @@ import com.example.user_service.service.mapper.UserMapper;
 import com.example.user_service.service.security.JwtService;
 import com.example.user_service.service.security.impl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,7 +36,9 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, CustomUserDetailsService customUserDetailsService, JwtService jwtService, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                           @Lazy CustomUserDetailsService customUserDetailsService, JwtService jwtService,
+                           UserMapper userMapper) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -50,7 +54,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Long id) {
+    @Transactional(readOnly = true)
+    public User getUserById(UUID id) {
         return userRepository.findById(id).orElseThrow(() ->
                 new UserNotFoundException("Такой пользователь не найден.")
         );
@@ -94,29 +99,19 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.USER);
         user.setIsActive(true);
         user.setIsLocked(false);
-        user.setCreatedAt(LocalDateTime.now());
 
         return save(user);
     }
 
     @Override
     @Transactional
-    public UserResponse update(JwtData jwtData, UserUpdateRequest dto) {
+    public UserResponse update(UserUpdateRequest dto) {
 
-        User user = getUserById(jwtData.getId());
+        User user = getUserById(getUserFromAuthentication().getId());
         boolean emailChanged = dto.getEmail() != null && !dto.getEmail().equals(user.getEmail());
         if (emailChanged) {
             verifyUserExistByEmail(dto.getEmail());
         }
-//        Optional.ofNullable(dto.getEmail()).ifPresent(email -> {
-//            verifyUserExistByEmail(email);
-//            user.setEmail(email);
-//            emailChanged.set(true);
-//        });
-//        Optional.ofNullable(dto.getSurname()).ifPresent(user::setSurname);
-//        Optional.ofNullable(dto.getName()).ifPresent(user::setName);
-//        Optional.ofNullable(dto.getPatronymic()).ifPresent(user::setPatronymic);
-//        Optional.ofNullable(dto.getPhoneNumber()).ifPresent(user::setPhoneNumber);
         userMapper.updateUserFromUserUpdateDto(dto, user);
         user = save(user);
         UserResponse userResponse = userMapper.toUserResponse(user);
@@ -133,9 +128,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User updatePassword(JwtData jwtData, UserUpdatePasswordRequest dto) {
+    public User updatePassword(UserUpdatePasswordRequest dto) {
 
-        User user = getUserById(jwtData.getId());
+        User user = getUserById(getUserFromAuthentication().getId());
         Optional.ofNullable(dto.getPassword())
                 .filter(password -> !password.trim().isEmpty())
                 .map(passwordEncoder::encode)
@@ -147,10 +142,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void delete(JwtData jwtData) {
+    public void delete() {
 
-        User user = getUserById(jwtData.getId());
+        User user = getUserById(getUserFromAuthentication().getId());
         userRepository.delete(user);
     }
 
+    @Override
+    public CustomUserDetails getUserFromAuthentication() {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return Optional.ofNullable((CustomUserDetails) auth.getPrincipal())
+                .orElseThrow(()-> new UserNotFoundException("Пользователь не найден."));
+    }
 }
