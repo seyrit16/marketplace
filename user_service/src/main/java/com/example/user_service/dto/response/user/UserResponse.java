@@ -1,4 +1,4 @@
-package com.example.user_service.dto.response;
+package com.example.user_service.dto.response.user;
 
 import com.example.user_service.dto.base.BaseUserDTO;
 import com.example.user_service.invariant.Role;
