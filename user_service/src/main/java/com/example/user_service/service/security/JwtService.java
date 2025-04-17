@@ -45,21 +45,6 @@ public class JwtService {
         return extractClaim(token, claims -> claims.get("id", Long.class));
     }
 
-    public JwtData extractData(String token) {
-        return JwtData.builder()
-                .id(extractId(token))
-                .email(extractEmail(token))
-                .role(extractClaim(token, claims -> {
-                    String roleStr = claims.get("role", String.class);
-                    return roleStr != null ? Role.valueOf(roleStr) : null;
-                }))
-                .createdDateTime(extractClaim(token, claims -> {
-                    String cdts = claims.get("createdDateTime", String.class);
-                    return cdts != null ? LocalDateTime.parse(cdts) : null;
-                }))
-                .build();
-    }
-
     public String generateToken(UserDetails userDetails) {
 
         Map<String, Object> claims = new HashMap<>();
