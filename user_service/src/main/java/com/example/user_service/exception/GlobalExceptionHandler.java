@@ -18,6 +18,38 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
+    @ExceptionHandler(ConflictResourceByUserException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ErrorResponseDTO> handleException(ConflictResourceByUserException exception,
+                                                            HttpServletRequest request) {
+        String timestamp = LocalDateTime.now().format(formatter);
+        logger.error("Conflict resource by user error: {} {}", request.getMethod(), request.getRequestURI(), exception);
+
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(exception.getMessage())
+                .timestamp(timestamp)
+                .build();
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorResponseDTO> handleException(ResourceNotFoundException exception,
+                                                            HttpServletRequest request) {
+        String timestamp = LocalDateTime.now().format(formatter);
+        logger.error("Resource not found error: {} {}", request.getMethod(), request.getRequestURI(), exception);
+
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .message(exception.getMessage())
+                .timestamp(timestamp)
+                .build();
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(VerificationServiceWorkException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorResponseDTO> handleException(VerificationServiceWorkException exception,
