@@ -1,24 +1,18 @@
 package com.example.user_service.service.mapper;
 
-import com.example.user_service.dto.UserDTO;
-import com.example.user_service.dto.response.UserResponse;
+import com.example.user_service.dto.response.user.UserResponse;
 import com.example.user_service.dto.request.user.UserUpdateRequest;
 import com.example.user_service.model.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
-
-    @Mapping(target = "verifyCode", ignore = true)
-    @Mapping(target = "token", ignore = true)
-    UserDTO toUserDTO(User user);
-
     UserResponse toUserResponse(User user);
 
-    User fromUserDTO(UserDTO userDTO);
-
+    @Mapping(target = "email", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "surname", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "name", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "patronymic", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "phoneNumber", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUserFromUserUpdateDto(UserUpdateRequest dto, @MappingTarget User user);
 }
