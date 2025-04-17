@@ -6,13 +6,18 @@ import com.example.user_service.dto.response.user.UserResponse;
 import com.example.user_service.dto.request.user.UserUpdatePasswordRequest;
 import com.example.user_service.dto.request.user.UserUpdateRequest;
 import com.example.user_service.model.User;
+import com.example.user_service.model.UserProfile;
 
 import java.util.UUID;
 
 public interface UserService {
     User save(User user);
 
+    UserProfile saveUserProfile(UserProfile userProfile);
+
     User getUserById(UUID id);
+
+    UserProfile getUserProfileById(UUID id);
 
     User getUserByEmail(String email);
 

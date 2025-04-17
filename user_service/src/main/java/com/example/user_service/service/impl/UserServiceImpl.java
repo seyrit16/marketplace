@@ -10,6 +10,8 @@ import com.example.user_service.exception.UserAlreadyExistException;
 import com.example.user_service.exception.UserNotFoundException;
 import com.example.user_service.invariant.Role;
 import com.example.user_service.model.User;
+import com.example.user_service.model.UserProfile;
+import com.example.user_service.repository.UserProfileRepository;
 import com.example.user_service.repository.UserRepository;
 import com.example.user_service.service.UserService;
 import com.example.user_service.service.mapper.UserMapper;
@@ -23,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,17 +33,19 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtService jwtService;
     private final UserMapper userMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, PasswordEncoder passwordEncoder,
                            @Lazy CustomUserDetailsService customUserDetailsService, JwtService jwtService,
                            UserMapper userMapper) {
 
         this.userRepository = userRepository;
+        this.userProfileRepository = userProfileRepository;
         this.passwordEncoder = passwordEncoder;
         this.customUserDetailsService = customUserDetailsService;
         this.jwtService = jwtService;
@@ -54,9 +59,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public UserProfile saveUserProfile(UserProfile userProfile) {
+        return userProfileRepository.save(userProfile);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public User getUserById(UUID id) {
         return userRepository.findById(id).orElseThrow(() ->
+                new UserNotFoundException("Такой пользователь не найден.")
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserProfile getUserProfileById(UUID id) {
+        return userProfileRepository.findById(id).orElseThrow(() ->
                 new UserNotFoundException("Такой пользователь не найден.")
         );
     }
@@ -99,8 +118,20 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.USER);
         user.setIsActive(true);
         user.setIsLocked(false);
+        User savedUser = null;
 
-        return save(user);
+        if(user.getRole().equals(Role.USER)){
+
+            UserProfile userProfile = UserProfile.builder()
+                    .id(user.getId())
+                    .user(user)
+                    .cards(new ArrayList<>())
+                    .defaultPickupPointId(null)
+                    .build();
+            savedUser = saveUserProfile(userProfile).getUser();
+        }
+
+        return savedUser;
     }
 
     @Override
