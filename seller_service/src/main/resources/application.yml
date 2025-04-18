@@ -1,0 +1,49 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: user_service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/seller_microservice_db
+    username: marketplace
+    password: marketplace
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  kafka:
+    bootstrap-servers: 172.26.175.66:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: user-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+logging:
+  level:
+    org.springframework: INFO
+    com.yourpackage: DEBUG
+  file:
+    name: logs/application.log
+
+cors:
+  allowed-origins: "*"
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
+  allow-credentials: true
+  allowed-headers: "*"
+
+token:
+  signing:
+    key: 7FQ7FQ8FAHNBTR9K3M943M2382FN238FNG3409VM3NV3482DN28301KDMA8FH4N3843FN923NFEF823R2FN9WGN1N
