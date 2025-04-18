@@ -2,12 +2,11 @@ package com.example.user_service.service.security.impl;
 
 import com.example.user_service.config.security.components.CustomUserDetails;
 import com.example.user_service.dto.auth.request.SignUpRequest;
+import com.example.user_service.dto.auth.request.SignUpSellerRequest;
 import com.example.user_service.exception.AuthenticationFailedException;
 import com.example.user_service.exception.InvalidVerificationCodeException;
 import com.example.user_service.model.User;
-import com.example.user_service.service.EmailService;
-import com.example.user_service.service.UserService;
-import com.example.user_service.service.VerificationService;
+import com.example.user_service.service.*;
 import com.example.user_service.service.security.AuthenticationService;
 import com.example.user_service.service.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +28,17 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
     private final JwtService jwtService;
     private final VerificationService verificationService;
     private final EmailService emailService;
+    private final SellerService sellerService;
 
     @Autowired
-    public AuthenticationServiceImpl(AuthenticationManager authenticationManager, @Qualifier("customUserDetailsService") CustomUserDetailsService customUserDetailsService, UserService userService, JwtService jwtService, VerificationService verificationService, EmailService emailService) {
+    public AuthenticationServiceImpl(AuthenticationManager authenticationManager, @Qualifier("customUserDetailsService") CustomUserDetailsService customUserDetailsService, UserService userService, JwtService jwtService, VerificationService verificationService, EmailService emailService, SellerService sellerService) {
         this.authenticationManager = authenticationManager;
         this.customUserDetailsService = customUserDetailsService;
         this.userService = userService;
         this.jwtService = jwtService;
         this.verificationService = verificationService;
         this.emailService = emailService;
+        this.sellerService = sellerService;
     }
 
     @Override
@@ -46,6 +47,13 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
         checkIsValidCodeByEmail(dto.getEmail(), dto.getVerifyCode());
         verificationService.deleteCode(dto.getEmail());
         return userService.register(dto);
+    }
+
+    @Override
+    public User signUpSeller(SignUpSellerRequest dto) {
+        checkIsValidCodeByEmail(dto.getEmail(),dto.getCode());
+        verificationService.deleteCode(dto.getEmail());
+        return sellerService.register(dto);
     }
 
     @Override

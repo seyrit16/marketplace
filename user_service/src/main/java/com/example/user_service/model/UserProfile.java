@@ -25,6 +25,18 @@ public class UserProfile {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "surname", nullable = false)
+    private String surname;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "patronymic")
+    private String patronymic;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Card> cards = new ArrayList<>();
 
