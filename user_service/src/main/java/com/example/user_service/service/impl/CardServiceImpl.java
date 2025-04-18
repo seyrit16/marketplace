@@ -5,7 +5,9 @@ import com.example.user_service.exception.ConflictResourceByUserException;
 import com.example.user_service.exception.ResourceNotFoundException;
 import com.example.user_service.model.Card;
 import com.example.user_service.model.User;
+import com.example.user_service.model.UserProfile;
 import com.example.user_service.repository.CardRepository;
+import com.example.user_service.repository.UserProfileRepository;
 import com.example.user_service.service.CardService;
 import com.example.user_service.service.UserService;
 import com.example.user_service.service.mapper.CardMapper;
@@ -39,12 +41,12 @@ public class CardServiceImpl implements CardService {
     @Transactional
     public void linkCardToUser(CardLinkRequest cardDTO) {
 
-        User user = userService.getUserById(userService.getUserFromAuthentication().getId());
+        UserProfile userProfile = userService.getUserProfileById(userService.getUserFromAuthentication().getId());
         Card card = cardMapper.fromCardLinkRequest(cardDTO);
-        card.setUser(user);
+        card.setUser(userProfile);
 
-        user.addCard(card);
-        userService.save(user);
+        userProfile.addCard(card);
+        userService.saveUserProfile(userProfile);
     }
 
     @Override

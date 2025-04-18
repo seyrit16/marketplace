@@ -56,14 +56,4 @@ public class User {
 
     @Column(name = "is_locked")
     private Boolean isLocked;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Card> cards = new ArrayList<>();
-
-    @Column(name = "default_pickup_point_id")
-    private Long defaultPickupPointId;
-
-    public void addCard(Card card) {
-        this.cards.add(card);
-    }
 }
