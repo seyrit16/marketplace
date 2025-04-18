@@ -112,9 +112,6 @@ public class UserServiceImpl implements UserService {
                 .ifPresentOrElse(user::setPassword, () -> {
                     throw new PasswordIsMissingException("Поле пароль является обязательным");
                 });
-        user.setSurname(dto.getSurname());
-        user.setName(dto.getName());
-        Optional.ofNullable(dto.getPatronymic()).ifPresent(user::setPatronymic);
         user.setRole(Role.USER);
         user.setIsActive(true);
         user.setIsLocked(false);
@@ -125,6 +122,9 @@ public class UserServiceImpl implements UserService {
             UserProfile userProfile = UserProfile.builder()
                     .id(user.getId())
                     .user(user)
+                    .surname(dto.getSurname())
+                    .name(dto.getName())
+                    .patronymic(dto.getPatronymic())
                     .cards(new ArrayList<>())
                     .defaultPickupPointId(null)
                     .build();

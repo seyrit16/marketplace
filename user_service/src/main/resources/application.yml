@@ -65,3 +65,7 @@ token:
 verification:
   code:
     code_ttl_minutes: 5
+
+seller:
+  service:
+    url: http://localhost:8084
