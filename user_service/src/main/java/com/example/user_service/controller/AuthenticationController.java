@@ -3,6 +3,7 @@ package com.example.user_service.controller;
 import com.example.user_service.dto.auth.request.SignInWithCodeRequest;
 import com.example.user_service.dto.auth.request.SignInWithPasswordRequest;
 import com.example.user_service.dto.auth.request.SignUpRequest;
+import com.example.user_service.dto.auth.request.SignUpSellerRequest;
 import com.example.user_service.dto.auth.response.JwtTokenResponse;
 import com.example.user_service.dto.response.Response;
 import com.example.user_service.service.security.AuthenticationService;
@@ -31,6 +32,13 @@ public class AuthenticationController {
     public ResponseEntity<Void> signUpUser(@RequestBody SignUpRequest requestData) {
 
         authenticationService.signUpUser(requestData);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/sign_up/seller")
+    public ResponseEntity<Void> signUpSeller(@RequestBody SignUpSellerRequest        requestData) {
+
+        authenticationService.signUpSeller(requestData);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
