@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @FeignClient(name = "seller-service", url = "${seller.service.url}")
 public interface SellerClient {
-    @PostMapping("/api/seller")
+    @PostMapping("/api/seller/auth/create")
     void createSeller(SellerCreateRequest sellerCreateRequest);
 }
