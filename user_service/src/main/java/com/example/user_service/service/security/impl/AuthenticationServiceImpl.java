@@ -5,6 +5,8 @@ import com.example.user_service.dto.auth.request.SignUpRequest;
 import com.example.user_service.dto.auth.request.SignUpSellerRequest;
 import com.example.user_service.exception.AuthenticationFailedException;
 import com.example.user_service.exception.InvalidVerificationCodeException;
+import com.example.user_service.exception.UserNotFoundException;
+import com.example.user_service.invariant.Role;
 import com.example.user_service.model.User;
 import com.example.user_service.service.*;
 import com.example.user_service.service.security.AuthenticationService;
@@ -65,18 +67,21 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
     }
 
     @Override
-    public String signInWithCode(String email, String verifyCode) {
+    public String signInWithCode(String email, String verifyCode, Role role) {
 
         checkIsValidCodeByEmail(email, verifyCode);
 
         CustomUserDetails customUserDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(email);
         verificationService.deleteCode(email);
+        if(!customUserDetails.getRole().equals(role)){
+            throw new AuthenticationFailedException("Доступ запрещён: используйте соответствующий адрес для входа в систему.");
+        }
 
         return jwtService.generateToken(customUserDetails);
     }
 
     @Override
-    public String signInWithPassword(String email, String password) {
+    public String signInWithPassword(String email, String password, Role role) {
         CustomUserDetails customUserDetails;
         try{
             String effectivePassword = Optional.ofNullable(password).orElse("");
@@ -86,6 +91,9 @@ public class AuthenticationServiceImpl implements AuthenticationService  {
             customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         }catch (AuthenticationException exception){
             throw new AuthenticationFailedException("Неверный адрес почты или пароль.");
+        }
+        if(!customUserDetails.getRole().equals(role)){
+            throw new AuthenticationFailedException("Доступ запрещён: используйте соответствующий адрес для входа в систему.");
         }
 
         return jwtService.generateToken(customUserDetails);

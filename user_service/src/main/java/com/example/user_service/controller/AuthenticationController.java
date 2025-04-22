@@ -6,6 +6,7 @@ import com.example.user_service.dto.auth.request.SignUpRequest;
 import com.example.user_service.dto.auth.request.SignUpSellerRequest;
 import com.example.user_service.dto.auth.response.JwtTokenResponse;
 import com.example.user_service.dto.response.Response;
+import com.example.user_service.invariant.Role;
 import com.example.user_service.service.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,7 @@ public class AuthenticationController {
     @PostMapping("/sign_in/with_code/user")
     public ResponseEntity<JwtTokenResponse> signInWithCodeUser(@RequestBody SignInWithCodeRequest requestData) {
 
-        String token = authenticationService.signInWithCode(requestData.getEmail(), requestData.getCode());
+        String token = authenticationService.signInWithCode(requestData.getEmail(), requestData.getCode(),Role.USER);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new JwtTokenResponse(token));
     }
@@ -53,7 +54,24 @@ public class AuthenticationController {
     @PostMapping("/sign_in/with_password/user")
     public ResponseEntity<JwtTokenResponse> signInWithPasswordUser(@RequestBody SignInWithPasswordRequest requestData) {
 
-        String token = authenticationService.signInWithPassword(requestData.getEmail(), requestData.getPassword());
+        String token = authenticationService.signInWithPassword(requestData.getEmail(), requestData.getPassword(), Role.USER);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new JwtTokenResponse(token));
+    }
+
+    @PostMapping("/sign_in/with_code/seller")
+    public ResponseEntity<JwtTokenResponse> signInWithCodeSeller(@RequestBody SignInWithCodeRequest requestData) {
+
+        String token = authenticationService.signInWithCode(requestData.getEmail(), requestData.getCode(),Role.SELLER);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new JwtTokenResponse(token));
+    }
+
+    @PostMapping("/sign_in/with_password/seller")
+    public ResponseEntity<JwtTokenResponse> signInWithPasswordSeller(@RequestBody SignInWithPasswordRequest requestData) {
+
+        String token = authenticationService.signInWithPassword(requestData.getEmail(), requestData.getPassword(),
+                Role.SELLER);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new JwtTokenResponse(token));
     }
