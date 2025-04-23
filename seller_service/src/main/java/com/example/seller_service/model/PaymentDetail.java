@@ -11,8 +11,8 @@ import lombok.*;
 @Builder
 @ToString
 @Entity
-@Table(name = "seller_payment_details")
-public class SellerPaymentDetail {
+@Table(name = "payment_details")
+public class PaymentDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
