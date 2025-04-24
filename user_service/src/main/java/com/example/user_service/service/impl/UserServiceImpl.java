@@ -2,6 +2,7 @@ package com.example.user_service.service.impl;
 
 import com.example.user_service.config.security.components.CustomUserDetails;
 import com.example.user_service.dto.auth.request.SignUpRequest;
+import com.example.user_service.dto.request.user.UserUpdateEmailRequest;
 import com.example.user_service.dto.response.user.UserResponse;
 import com.example.user_service.dto.request.user.UserUpdatePasswordRequest;
 import com.example.user_service.dto.request.user.UserUpdateRequest;
@@ -122,9 +123,9 @@ public class UserServiceImpl implements UserService {
             UserProfile userProfile = UserProfile.builder()
                     .id(user.getId())
                     .user(user)
-                    .surname(dto.getSurname())
-                    .name(dto.getName())
-                    .patronymic(dto.getPatronymic())
+                    .surname(dto.getUserProfile().getSurname())
+                    .name(dto.getUserProfile().getName())
+                    .patronymic(dto.getUserProfile().getPatronymic())
                     .cards(new ArrayList<>())
                     .defaultPickupPointId(null)
                     .build();
@@ -144,12 +145,13 @@ public class UserServiceImpl implements UserService {
             verifyUserExistByEmail(dto.getEmail());
         }
         userMapper.updateUserFromUserUpdateDto(dto, user);
-        user = save(user);
+        User newUser = save(user);
         UserResponse userResponse = userMapper.toUserResponse(user);
 
         String newToken;
         if (emailChanged) {
-            CustomUserDetails customUserDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(user.getEmail());
+            CustomUserDetails customUserDetails =
+                    (CustomUserDetails) customUserDetailsService.loadUserByUsername(newUser.getEmail());
             newToken = jwtService.refreshToken(customUserDetails);
             userResponse.setToken(newToken);
         }
@@ -169,6 +171,30 @@ public class UserServiceImpl implements UserService {
                     throw new PasswordIsMissingException("Поле пароль является обязательным");
                 });
         return save(user);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse updateEmail(UserUpdateEmailRequest dto) {
+
+        User user = getUserById(getUserFromAuthentication().getId());
+        boolean emailChanged = dto.getEmail() != null && !dto.getEmail().equals(user.getEmail());
+        if (emailChanged) {
+            verifyUserExistByEmail(dto.getEmail());
+        }
+        user.setEmail(dto.getEmail());
+        user = save(user);
+        UserResponse userResponse = userMapper.toUserResponse(user);
+
+        String newToken;
+        if (emailChanged) {
+            CustomUserDetails customUserDetails =
+                    (CustomUserDetails) customUserDetailsService.loadUserByUsername(user.getEmail());
+            newToken = jwtService.refreshToken(customUserDetails);
+            userResponse.setToken(newToken);
+        }
+
+        return userResponse;
     }
 
     @Override

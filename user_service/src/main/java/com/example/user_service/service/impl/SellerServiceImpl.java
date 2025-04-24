@@ -1,4 +1,4 @@
-package com.example.user_service.service;
+package com.example.user_service.service.impl;
 
 import com.example.user_service.client.SellerClient;
 import com.example.user_service.dto.auth.request.SignUpSellerRequest;
@@ -6,6 +6,8 @@ import com.example.user_service.exception.PasswordIsMissingException;
 import com.example.user_service.exception.SellerClientException;
 import com.example.user_service.invariant.Role;
 import com.example.user_service.model.User;
+import com.example.user_service.service.SellerService;
+import com.example.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class SellerServiceImpl implements SellerService{
+public class SellerServiceImpl implements SellerService {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;

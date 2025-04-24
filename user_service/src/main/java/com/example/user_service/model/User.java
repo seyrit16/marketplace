@@ -24,6 +24,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @OneToOne
+    @JoinColumn(name = "user_profile_id")
+    UserProfile userProfile;
+
     @Column(name = "email", nullable = false)
     private String email;
 
