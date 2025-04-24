@@ -1,6 +1,5 @@
 package com.example.user_service.config.security.components;
 
-import com.example.user_service.dto.UserDTO;
 import com.example.user_service.invariant.Role;
 import com.example.user_service.model.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,7 +11,6 @@ import java.util.Collections;
 import java.util.UUID;
 
 public class CustomUserDetails implements UserDetails {
-    //private final UserDTO user;
 
     private final UUID id;
     private String email;
