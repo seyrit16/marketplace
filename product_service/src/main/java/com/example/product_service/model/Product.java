@@ -1,4 +1,4 @@
-package com.example.product_service.config.elasticsearch.model;
+package com.example.product_service.model;
 
 import jakarta.persistence.*;
 import lombok.*;

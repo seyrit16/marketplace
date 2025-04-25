@@ -1,4 +1,4 @@
-package com.example.product_service.config.elasticsearch.model.document;
+package com.example.product_service.model.document;
 
 import jakarta.persistence.Id;
 import lombok.Getter;
