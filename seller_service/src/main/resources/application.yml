@@ -11,7 +11,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -47,3 +47,8 @@ cors:
 token:
   signing:
     key: 7FQ7FQ8FAHNBTR9K3M943M2382FN238FNG3409VM3NV3482DN28301KDMA8FH4N3843FN923NFEF823R2FN9WGN1N
+
+
+user:
+  service:
+    url: http://localhost:8081
