@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class SellerProfileUpdateResponse {
+public class SellerProfileResponse {
     private String fullCompanyName;
     private String shortCompanyName;
     private String description;

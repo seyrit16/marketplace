@@ -38,5 +38,5 @@ public class SellerProfile {
 
     @OneToOne(mappedBy = "seller", cascade = CascadeType.ALL)
     @JoinColumn(name = "seller_payment_detail_id")
-    private PaymentDetail sellerPaymentDetail;
+    private PaymentDetail paymentDetail;
 }

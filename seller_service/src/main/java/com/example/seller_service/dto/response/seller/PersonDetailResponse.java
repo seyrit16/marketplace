@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class PersonDetailUpdateResponse {
+public class PersonDetailResponse {
     private String surname;
     private String name;
     private String patronimyc;

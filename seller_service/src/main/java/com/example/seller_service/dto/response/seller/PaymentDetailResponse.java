@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class PaymentDetailUpdateResponse {
+public class PaymentDetailResponse {
     private String bankAccountNumber;
     private String bankName;
     private String bic;
