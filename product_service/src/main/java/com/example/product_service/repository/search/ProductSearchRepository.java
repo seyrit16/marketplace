@@ -1,6 +1,6 @@
-package com.example.product_service.config.elasticsearch.repository.search;
+package com.example.product_service.repository.search;
 
-import com.example.product_service.config.elasticsearch.model.document.ProductDocument;
+import com.example.product_service.model.document.ProductDocument;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
