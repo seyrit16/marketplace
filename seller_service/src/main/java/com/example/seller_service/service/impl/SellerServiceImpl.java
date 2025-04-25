@@ -49,7 +49,7 @@ public class SellerServiceImpl implements SellerService {
         SellerProfile sellerProfile = sellerMapper.fromSellerCreateRequest(sellerCreateRequest);
         sellerProfile.setUserId(sellerCreateRequest.getId());
         sellerProfile.setIsVerified(false);
-        sellerProfile.getSellerPaymentDetail().setIsVerified(false);
+        sellerProfile.getPaymentDetail().setIsVerified(false);
 
         return save(sellerProfile);
     }
@@ -94,7 +94,7 @@ public class SellerServiceImpl implements SellerService {
     public SellerProfile updateSellerPaymentDetail(PaymentDetailUpdateRequest paymentDetailUpdateRequest) {
 
         SellerProfile sellerProfile = getSellerProfileFromAuth();
-        paymentDetailMapper.updatePaymentDetailFromDTO(paymentDetailUpdateRequest,sellerProfile.getSellerPaymentDetail());
+        paymentDetailMapper.updatePaymentDetailFromDTO(paymentDetailUpdateRequest,sellerProfile.getPaymentDetail());
         return save(sellerProfile);
     }
 }
