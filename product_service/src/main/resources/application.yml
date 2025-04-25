@@ -1,0 +1,47 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: user_service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/product_microservice_db
+    username: marketplace
+    password: marketplace
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+  elasticsearch:
+    uris: "http://172.26.175.66:9200"
+
+logging:
+  level:
+    org.springframework: INFO
+    com.yourpackage: DEBUG
+  file:
+    name: logs/application.log
+
+cors:
+  allowed-origins: "*"
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
+  allow-credentials: true
+  allowed-headers: "*"
+
+token:
+  signing:
+    key: 7FQ7FQ8FAHNBTR9K3M943M2382FN238FNG3409VM3NV3482DN28301KDMA8FH4N3843FN923NFEF823R2FN9WGN1N
+
+seller:
+  service:
+    url: http://localhost:8084
