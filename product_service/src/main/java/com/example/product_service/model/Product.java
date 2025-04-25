@@ -2,6 +2,7 @@ package com.example.product_service.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
@@ -32,10 +33,28 @@ public class Product {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
+    @ColumnDefault("0")
+    @Column(name = "rating",nullable = false)
+    private Integer rating;
+
+    @ColumnDefault("0")
+    @Column(name = "number_of_purchases", nullable = false)
+    private Integer numberOfPurchases;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+//     [
+//        {group1}:[
+//            {key1}: {value1}
+//            {key2}: {value2}
+//        ],
+//        <group2>:[
+//            {key1}: {value1}
+//            {key2}: {value2}
+//        ]
+//     ]
     @Column(name = "attributes", columnDefinition = "jsonb")
     private String attributes;
 
