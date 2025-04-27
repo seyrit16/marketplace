@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -34,7 +36,7 @@ public class Product {
     private BigDecimal price;
 
     @ColumnDefault("0")
-    @Column(name = "rating",nullable = false)
+    @Column(name = "rating", nullable = false)
     private Integer rating;
 
     @ColumnDefault("0")
@@ -45,19 +47,9 @@ public class Product {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-//     [
-//        {group1}:[
-//            {key1}: {value1}
-//            {key2}: {value2}
-//        ],
-//        <group2>:[
-//            {key1}: {value1}
-//            {key2}: {value2}
-//        ]
-//     ]
-    @Column(name = "attributes", columnDefinition = "jsonb")
-    private String attributes;
-
     @Column(name = "url_images_directory")
     private String urlImagesDirectory;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductAttributeValue> attributes = new ArrayList<>();
 }
