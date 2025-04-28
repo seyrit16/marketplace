@@ -17,6 +17,5 @@ public class ProductCreateRequest {
     private String description;
     private BigDecimal price;
     private List<ProductAttrValCreateRequest> attributes;
-    private List<File> files;
-    //private String urlImagesDirectory;
+    private List<ProductImageCreateRequest> images;
 }
