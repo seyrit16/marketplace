@@ -33,6 +33,7 @@ logging:
   level:
     org.springframework: INFO
     com.yourpackage: DEBUG
+    feign: DEBUG
   file:
     name: logs/application.log
 
@@ -49,6 +50,9 @@ token:
 file:
   storage:
     location: S:\A_project\Java project\marketplace\storage
+  paths:
+    products:
+      relative-location: \products
 
 seller:
   service:

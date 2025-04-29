@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@FeignClient(name = "seller-service", url = "seller.service.url", configuration = FeignAuthInterceptor.class)
+@FeignClient(name = "seller-service", url = "${seller.service.url}", configuration = FeignAuthInterceptor.class)
 public interface SellerClient {
 
     @GetMapping("/api/seller")
