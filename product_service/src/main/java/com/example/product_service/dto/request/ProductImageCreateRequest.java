@@ -9,6 +9,5 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @ToString
 public class ProductImageCreateRequest {
-    private MultipartFile file;
     private Integer sortOrder;
 }
