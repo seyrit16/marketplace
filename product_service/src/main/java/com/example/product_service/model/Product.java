@@ -25,6 +25,10 @@ public class Product {
     @Column(name = "seller_id", nullable = false)
     private UUID sellerId;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -45,9 +49,6 @@ public class Product {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "url_images_directory")
-    private String urlImagesDirectory;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductAttributeValue> attributes = new ArrayList<>();

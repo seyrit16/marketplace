@@ -7,12 +7,14 @@ import com.example.product_service.dto.request.ProductImageCreateRequest;
 import com.example.product_service.dto.request.ProductUpdateRequest;
 import com.example.product_service.dto.rest.SellerForCreateProductResponse;
 import com.example.product_service.exception.UserNotFoundException;
+import com.example.product_service.model.Category;
 import com.example.product_service.model.Product;
 import com.example.product_service.model.ProductAttributeValue;
 import com.example.product_service.model.ProductImage;
 import com.example.product_service.model.document.ProductDocument;
 import com.example.product_service.repository.ProductRepository;
 import com.example.product_service.repository.search.ProductSearchRepository;
+import com.example.product_service.service.CategoryService;
 import com.example.product_service.service.LocalFileStorageService;
 import com.example.product_service.service.ProductSearchService;
 import com.example.product_service.service.ProductService;
@@ -42,12 +44,13 @@ public class ProductServiceImpl implements ProductService {
     private final ProductAttributeValueMapper productAttributeValueMapper;
     private final LocalFileStorageService localFileStorageService;
     private final ProductSearchRepository productSearchRepository;
+    private final CategoryService categoryService;
 
     @Value("${file.paths.products.relative-location}")
     private String IMG_DIR_PATH;
 
     @Autowired
-    public ProductServiceImpl(ProductSearchService productSearchService, ProductRepository productRepository, SellerClient sellerClient, ProductMapper productMapper, ProductAttributeValueMapper productAttributeValueMapper, LocalFileStorageService localFileStorageService, ProductSearchRepository productSearchRepository) {
+    public ProductServiceImpl(ProductSearchService productSearchService, ProductRepository productRepository, SellerClient sellerClient, ProductMapper productMapper, ProductAttributeValueMapper productAttributeValueMapper, LocalFileStorageService localFileStorageService, ProductSearchRepository productSearchRepository, CategoryService categoryService) {
         this.productSearchService = productSearchService;
         this.productRepository = productRepository;
         this.sellerClient = sellerClient;
@@ -55,6 +58,7 @@ public class ProductServiceImpl implements ProductService {
         this.productAttributeValueMapper = productAttributeValueMapper;
         this.localFileStorageService = localFileStorageService;
         this.productSearchRepository = productSearchRepository;
+        this.categoryService = categoryService;
     }
 
 
@@ -72,15 +76,15 @@ public class ProductServiceImpl implements ProductService {
         SellerForCreateProductResponse sellerClientResponse = sellerClient.getSellerData().getBody();
         Product product = new Product();
         product.setId(UUID.randomUUID());
-        if(authentication.getCredentials() instanceof UUID sellerId){
+        if (authentication.getCredentials() instanceof UUID sellerId) {
             product.setSellerId(sellerId);
-        }else{
+        } else {
             throw new UserNotFoundException("Ошибка при создании продукта: пользователь не найден.");
         }
 
-        productMapper.fromProductCreateRequest(data,product);
+        productMapper.fromProductCreateRequest(data, product);
         List<ProductAttributeValue> attributeList = new ArrayList<>();
-        for(ProductAttrValCreateRequest attributeDTO: data.getAttributes()){
+        for (ProductAttrValCreateRequest attributeDTO : data.getAttributes()) {
             ProductAttributeValue attribute = productAttributeValueMapper.fromProductAttrValCreateRequest(attributeDTO);
             attribute.setProduct(product);
             attributeList.add(attribute);
@@ -88,15 +92,22 @@ public class ProductServiceImpl implements ProductService {
         product.setAttributes(attributeList);
         product.setRating(0);
         product.setNumberOfPurchases(0);
+        Category category;
+        if (data.getCategoryId() == null) {
+            category = categoryService.getRootCategory();
+        } else {
+            category = categoryService.getCategoryById(data.getCategoryId());
+        }
+        product.setCategory(category);
 
         // добавление изображений
         List<ProductImageCreateRequest> imagesDTO = data.getImages();
-        if(files.size() != imagesDTO.size()){
+        if (files.size() != imagesDTO.size()) {
             throw new IllegalArgumentException("Количество файлов и описаний изображений не совпадает.");
         }
         List<ProductImage> productImageList = new ArrayList<>();
         String filedir = IMG_DIR_PATH + "\\" + product.getId();
-        for(int i=0;i< imagesDTO.size();i++){
+        for (int i = 0; i < imagesDTO.size(); i++) {
             MultipartFile file = files.get(i);
             ProductImageCreateRequest imgDTO = imagesDTO.get(i);
 
@@ -107,19 +118,20 @@ public class ProductServiceImpl implements ProductService {
             image.setFileName(filename);
             image.setUrl(filedir + "\\" + filename);
             image.setSortOrder(imgDTO.getSortOrder());
-            localFileStorageService.save(filename,file);
+            localFileStorageService.save(filename, file);
             productImageList.add(image);
         }
         product.setImages(productImageList);
 
         ProductDocument productDocument = new ProductDocument();
         productDocument.setId(product.getId());
+        productDocument.setCategoryName(category.getName());
         productDocument.setName(product.getName());
         productDocument.setDescription(product.getDescription());
         productDocument.setPrice(product.getPrice());
         productDocument.setRating(product.getRating());
         productDocument.setCreatedAt(product.getCreatedAt());
-        for(ProductAttributeValue attr: product.getAttributes()){
+        for (ProductAttributeValue attr : product.getAttributes()) {
             productDocument.addAttribute(new ProductDocument.Attribute(attr.getGroup(), attr.getName(), attr.getValue()));
         }
         productDocument.setSeller(new ProductDocument.Seller(sellerClientResponse.getFullCompanyName(), sellerClientResponse.getShortCompanyName()));
