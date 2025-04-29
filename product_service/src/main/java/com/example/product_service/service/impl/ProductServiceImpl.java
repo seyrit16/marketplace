@@ -10,7 +10,9 @@ import com.example.product_service.exception.UserNotFoundException;
 import com.example.product_service.model.Product;
 import com.example.product_service.model.ProductAttributeValue;
 import com.example.product_service.model.ProductImage;
+import com.example.product_service.model.document.ProductDocument;
 import com.example.product_service.repository.ProductRepository;
+import com.example.product_service.repository.search.ProductSearchRepository;
 import com.example.product_service.service.LocalFileStorageService;
 import com.example.product_service.service.ProductSearchService;
 import com.example.product_service.service.ProductService;
@@ -39,18 +41,20 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final ProductAttributeValueMapper productAttributeValueMapper;
     private final LocalFileStorageService localFileStorageService;
+    private final ProductSearchRepository productSearchRepository;
 
     @Value("${file.paths.products.relative-location}")
     private String IMG_DIR_PATH;
 
     @Autowired
-    public ProductServiceImpl(ProductSearchService productSearchService, ProductRepository productRepository, SellerClient sellerClient, ProductMapper productMapper, ProductAttributeValueMapper productAttributeValueMapper, LocalFileStorageService localFileStorageService) {
+    public ProductServiceImpl(ProductSearchService productSearchService, ProductRepository productRepository, SellerClient sellerClient, ProductMapper productMapper, ProductAttributeValueMapper productAttributeValueMapper, LocalFileStorageService localFileStorageService, ProductSearchRepository productSearchRepository) {
         this.productSearchService = productSearchService;
         this.productRepository = productRepository;
         this.sellerClient = sellerClient;
         this.productMapper = productMapper;
         this.productAttributeValueMapper = productAttributeValueMapper;
         this.localFileStorageService = localFileStorageService;
+        this.productSearchRepository = productSearchRepository;
     }
 
 
@@ -65,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
     public Product create(ProductCreateRequest data, List<MultipartFile> files) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SellerForCreateProductResponse response = sellerClient.getSellerData().getBody();
+        SellerForCreateProductResponse sellerClientResponse = sellerClient.getSellerData().getBody();
         Product product = new Product();
         product.setId(UUID.randomUUID());
         if(authentication.getCredentials() instanceof UUID sellerId){
@@ -107,6 +111,19 @@ public class ProductServiceImpl implements ProductService {
             productImageList.add(image);
         }
         product.setImages(productImageList);
+
+        ProductDocument productDocument = new ProductDocument();
+        productDocument.setId(product.getId());
+        productDocument.setName(product.getName());
+        productDocument.setDescription(product.getDescription());
+        productDocument.setPrice(product.getPrice());
+        productDocument.setRating(product.getRating());
+        productDocument.setCreatedAt(product.getCreatedAt());
+        for(ProductAttributeValue attr: product.getAttributes()){
+            productDocument.addAttribute(new ProductDocument.Attribute(attr.getGroup(), attr.getName(), attr.getValue()));
+        }
+        productDocument.setSeller(new ProductDocument.Seller(sellerClientResponse.getFullCompanyName(), sellerClientResponse.getShortCompanyName()));
+        productSearchRepository.save(productDocument);
 
         return save(product);
     }
