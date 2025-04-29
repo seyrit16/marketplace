@@ -8,6 +8,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +22,8 @@ public class ProductDocument {
     @Id
     private UUID id;
 
+    private String categoryName;
+
     private String name;
 
     private String description;
@@ -32,18 +35,22 @@ public class ProductDocument {
     private LocalDateTime createdAt;
 
     @Field(type = FieldType.Nested)
-    private List<Characteristic> characteristics;
+    private List<Attribute> attributes = new ArrayList<>();
 
     @Field(type = FieldType.Object)
     private Seller seller;
+
+    public void addAttribute(Attribute attribute){
+        attributes.add(attribute);
+    }
 
     @Getter
     @Setter
     @AllArgsConstructor
     @ToString
-    public static class Characteristic {
+    public static class Attribute {
         private String group;
-        private String key;
+        private String name;
         private String value;
     }
 
