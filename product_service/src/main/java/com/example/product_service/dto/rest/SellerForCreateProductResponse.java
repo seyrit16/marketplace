@@ -10,6 +10,14 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class SellerForCreateProductResponse {
-    private String fullCompanyName;
-    private String shortCompanyName;
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    public static class SellerProfile{
+        private String fullCompanyName;
+        private String shortCompanyName;
+    }
+
+    private SellerProfile sellerProfile;
 }

@@ -134,7 +134,10 @@ public class ProductServiceImpl implements ProductService {
         for (ProductAttributeValue attr : product.getAttributes()) {
             productDocument.addAttribute(new ProductDocument.Attribute(attr.getGroup(), attr.getName(), attr.getValue()));
         }
-        productDocument.setSeller(new ProductDocument.Seller(sellerClientResponse.getFullCompanyName(), sellerClientResponse.getShortCompanyName()));
+        productDocument.setSeller(new ProductDocument.Seller(
+                sellerClientResponse.getSellerProfile().getFullCompanyName(),
+                sellerClientResponse.getSellerProfile().getShortCompanyName()
+        ));
         productSearchRepository.save(productDocument);
 
         return save(product);
