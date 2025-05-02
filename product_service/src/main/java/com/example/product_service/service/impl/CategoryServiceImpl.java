@@ -33,7 +33,11 @@ public class CategoryServiceImpl implements CategoryService {
     public Category createCategory(CategoryCreateRequest data) {
         Category category = new Category();
         category.setName(data.getName());
-        category.setParentCategory(getCategoryById(data.getRootCategoryId()));
+        if(data.getRootCategoryId() == null){
+            category.setParentCategory(getRootCategory());
+        }else{
+            category.setParentCategory(getCategoryById(data.getRootCategoryId()));
+        }
 
         return save(category);
     }
