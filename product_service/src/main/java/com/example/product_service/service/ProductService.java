@@ -15,7 +15,7 @@ public interface ProductService {
 
     Product create(ProductCreateRequest data, List<MultipartFile> files);
 
-    Page<Product> getAllProducts(Pageable pageable);
+    List<Product> getProductsById(List<UUID> ids);
 
     Product getProductById(UUID id);
 

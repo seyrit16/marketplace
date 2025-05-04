@@ -32,12 +32,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductSearchService productSearchService;
     private final ProductRepository productRepository;
     private final SellerClient sellerClient;
     private final ProductMapper productMapper;
@@ -50,8 +51,7 @@ public class ProductServiceImpl implements ProductService {
     private String IMG_DIR_PATH;
 
     @Autowired
-    public ProductServiceImpl(ProductSearchService productSearchService, ProductRepository productRepository, SellerClient sellerClient, ProductMapper productMapper, ProductAttributeValueMapper productAttributeValueMapper, LocalFileStorageService localFileStorageService, ProductSearchRepository productSearchRepository, CategoryService categoryService) {
-        this.productSearchService = productSearchService;
+    public ProductServiceImpl(ProductRepository productRepository, SellerClient sellerClient, ProductMapper productMapper, ProductAttributeValueMapper productAttributeValueMapper, LocalFileStorageService localFileStorageService, ProductSearchRepository productSearchRepository, CategoryService categoryService) {
         this.productRepository = productRepository;
         this.sellerClient = sellerClient;
         this.productMapper = productMapper;
@@ -144,9 +144,24 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<Product> getAllProducts(Pageable pageable) {
-        return null;
+    @Transactional
+    public List<Product> getProductsById(List<UUID> ids) {
+        List<Product> products = productRepository.findAllById(ids);
+
+        Set<UUID> foundIds = products.stream()
+                .map(Product::getId)
+                .collect(Collectors.toSet());
+
+        List<UUID> missingIds = ids.stream()
+                .filter(id -> !foundIds.contains(id))
+                .toList();
+
+
+        for(UUID id: missingIds){
+            productSearchRepository.deleteAllById(missingIds);
+        }
+
+        return products;
     }
 
     @Override
