@@ -11,10 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,9 +32,10 @@ public class SearchController {
         this.productMapper = productMapper;
     }
 
-    @GetMapping("/query")
-    public ResponseEntity<List<ProductResponse>> searchByQuery(@ModelAttribute ProductSearchRequest data,
-                                                               Pageable pageable) throws IOException {
+    @PostMapping("/query")
+    public ResponseEntity<List<ProductResponse>> searchByQuery(@RequestBody ProductSearchRequest data,
+                                                               Pageable pageable
+    ) throws IOException {
         data.setPageable(pageable);
         List<UUID> productIds = productSearchService.searchIdsByQuery(data);
 

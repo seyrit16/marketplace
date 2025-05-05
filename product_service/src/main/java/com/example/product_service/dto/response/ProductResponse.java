@@ -22,7 +22,7 @@ import java.util.UUID;
 public class ProductResponse {
     private UUID id;
     private UUID sellerId;
-    private CategoryResponse categoryResponse;
+    private CategoryResponse category;
     private String name;
     private String description;
     private BigDecimal price;
