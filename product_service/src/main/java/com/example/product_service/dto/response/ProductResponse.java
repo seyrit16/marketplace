@@ -30,4 +30,6 @@ public class ProductResponse {
     private Integer numberOfPurchases;
     private List<ProductAttrValResponse> attributes = new ArrayList<>();
     private List<ProductImageResponse> images = new ArrayList<>();
+
+    private Boolean deleted;
 }
