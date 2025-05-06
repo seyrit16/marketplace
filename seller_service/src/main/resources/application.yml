@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: user_service
+    name: seller_service
   datasource:
     url: jdbc:postgresql://localhost:5432/seller_microservice_db
     username: marketplace
