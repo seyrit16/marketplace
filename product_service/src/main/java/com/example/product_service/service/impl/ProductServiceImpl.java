@@ -6,6 +6,7 @@ import com.example.product_service.dto.request.ProductCreateRequest;
 import com.example.product_service.dto.request.ProductImageCreateRequest;
 import com.example.product_service.dto.request.ProductUpdateRequest;
 import com.example.product_service.dto.rest.SellerForCreateProductResponse;
+import com.example.product_service.exception.ProductNotFoundException;
 import com.example.product_service.exception.UserNotFoundException;
 import com.example.product_service.model.Category;
 import com.example.product_service.model.Product;
@@ -14,12 +15,10 @@ import com.example.product_service.model.ProductImage;
 import com.example.product_service.model.document.ProductDocument;
 import com.example.product_service.repository.ProductRepository;
 import com.example.product_service.repository.search.ProductSearchRepository;
-import com.example.product_service.service.CategoryService;
-import com.example.product_service.service.LocalFileStorageService;
-import com.example.product_service.service.ProductSearchService;
-import com.example.product_service.service.ProductService;
+import com.example.product_service.service.*;
 import com.example.product_service.service.mapper.ProductAttributeValueMapper;
 import com.example.product_service.service.mapper.ProductMapper;
+import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -118,7 +117,7 @@ public class ProductServiceImpl implements ProductService {
             image.setFileName(filename);
             image.setUrl(filedir + "\\" + filename);
             image.setSortOrder(imgDTO.getSortOrder());
-            localFileStorageService.save(filename, file);
+            localFileStorageService.save(image.getUrl(), file);
             productImageList.add(image);
         }
         product.setImages(productImageList);
@@ -157,7 +156,7 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
 
 
-        for(UUID id: missingIds){
+        for (UUID id : missingIds) {
             productSearchRepository.deleteAllById(missingIds);
         }
 
@@ -167,23 +166,37 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public Product getProductById(UUID id) {
-        return null;
-    }
-
-    @Override
-    @Transactional
-    public Product update(ProductUpdateRequest request) {
-        return null;
+        return productRepository.findById(id).orElseThrow(
+                () -> new ProductNotFoundException("Продукт не найден.")
+        );
     }
 
     @Override
     @Transactional
     public void delete(Product product) {
+
+        localFileStorageService.delete(IMG_DIR_PATH + "\\"+ product.getId().toString());
+        productSearchRepository.deleteById(product.getId());
         productRepository.delete(product);
     }
 
     @Override
+    @Transactional
+    public void deleteById(UUID id) {
+
+        Product product = getProductById(id);
+
+        localFileStorageService.delete(IMG_DIR_PATH + "\\"+ product.getId().toString());
+        productSearchRepository.deleteById(product.getId());
+        productRepository.deleteById(id);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<Product> getAllProductsBySellerId(UUID id, Pageable pageable) {
-        return null;
+        return productRepository.findAllBySellerId(id, pageable).orElseThrow(
+                () -> new ProductNotFoundException("Продукты не найдены.")
+        );
     }
 }
