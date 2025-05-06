@@ -56,4 +56,8 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true)
     @OrderBy("sortOrder ASC")
     private List<ProductImage> images = new ArrayList<>();
+
+    @ColumnDefault(value = "false")
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted;
 }

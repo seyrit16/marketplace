@@ -175,9 +175,9 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void delete(Product product) {
 
-        localFileStorageService.delete(IMG_DIR_PATH + "\\"+ product.getId().toString());
         productSearchRepository.deleteById(product.getId());
-        productRepository.delete(product);
+        product.setDeleted(true);
+        save(product);
     }
 
     @Override
@@ -186,9 +186,9 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = getProductById(id);
 
-        localFileStorageService.delete(IMG_DIR_PATH + "\\"+ product.getId().toString());
         productSearchRepository.deleteById(product.getId());
-        productRepository.deleteById(id);
+        product.setDeleted(true);
+        save(product);
     }
 
 
