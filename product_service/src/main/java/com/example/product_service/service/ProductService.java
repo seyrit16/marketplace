@@ -19,9 +19,8 @@ public interface ProductService {
 
     Product getProductById(UUID id);
 
-    Product update(ProductUpdateRequest request);
-
     void delete(Product product);
+    void deleteById(UUID id);
 
     Page<Product> getAllProductsBySellerId(UUID id, Pageable pageable);
 }

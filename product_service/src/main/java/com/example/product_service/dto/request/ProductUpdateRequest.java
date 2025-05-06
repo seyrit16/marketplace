@@ -13,18 +13,9 @@ import java.util.UUID;
 public class ProductUpdateRequest {
     private UUID id;
 
+    private Long categoryId;
+
     private String name;
     private String description;
     private BigDecimal price;
-//     [
-//        {group1}:[
-//            {key1}: {value1}
-//            {key2}: {value2}
-//        ],
-//        <group2>:[
-//            {key1}: {value1}
-//            {key2}: {value2}
-//        ]
-//     ]
-    private String attributes;
 }
