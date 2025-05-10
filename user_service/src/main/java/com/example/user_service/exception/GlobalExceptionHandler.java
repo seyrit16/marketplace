@@ -18,9 +18,39 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
+    @ExceptionHandler(SellerClientException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponseDTO> handleSellerClientException(SellerClientException exception, HttpServletRequest request) {
+        String timestamp = LocalDateTime.now().format(formatter);
+        logger.error("Seller client exception error: {} {}", request.getMethod(), request.getRequestURI(), exception);
+
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                .message(exception.getMessage())
+                .timestamp(timestamp)
+                .build();
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(OrderClientException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponseDTO> handleOrderClientException(OrderClientException exception, HttpServletRequest request) {
+        String timestamp = LocalDateTime.now().format(formatter);
+        logger.error("Order client exception error: {} {}", request.getMethod(), request.getRequestURI(), exception);
+
+        ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                .message(exception.getMessage())
+                .timestamp(timestamp)
+                .build();
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(ConflictResourceByUserException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<ErrorResponseDTO> handleException(ConflictResourceByUserException exception,
+    public ResponseEntity<ErrorResponseDTO> handleConflictResourceByUserException(ConflictResourceByUserException exception,
                                                             HttpServletRequest request) {
         String timestamp = LocalDateTime.now().format(formatter);
         logger.error("Conflict resource by user error: {} {}", request.getMethod(), request.getRequestURI(), exception);
@@ -36,7 +66,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorResponseDTO> handleException(ResourceNotFoundException exception,
+    public ResponseEntity<ErrorResponseDTO> handleResourceNotFoundException(ResourceNotFoundException exception,
                                                             HttpServletRequest request) {
         String timestamp = LocalDateTime.now().format(formatter);
         logger.error("Resource not found error: {} {}", request.getMethod(), request.getRequestURI(), exception);
@@ -52,7 +82,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(VerificationServiceWorkException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<ErrorResponseDTO> handleException(VerificationServiceWorkException exception,
+    public ResponseEntity<ErrorResponseDTO> handleVerificationServiceWorkException(VerificationServiceWorkException exception,
                                                             HttpServletRequest request) {
         String timestamp = LocalDateTime.now().format(formatter);
         logger.error("Verification service work error: {} {}", request.getMethod(), request.getRequestURI(), exception);
@@ -68,7 +98,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<ErrorResponseDTO> handleException(UserAlreadyExistException exception,
+    public ResponseEntity<ErrorResponseDTO> handleUserAlreadyExistException(UserAlreadyExistException exception,
                                                             HttpServletRequest request) {
         String timestamp = LocalDateTime.now().format(formatter);
         logger.error("User already exist error: {} {}", request.getMethod(), request.getRequestURI(), exception);
@@ -84,7 +114,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PasswordIsMissingException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<ErrorResponseDTO> handleException(PasswordIsMissingException exception,
+    public ResponseEntity<ErrorResponseDTO> handlePasswordIsMissingException(PasswordIsMissingException exception,
                                                             HttpServletRequest request) {
         String timestamp = LocalDateTime.now().format(formatter);
         logger.error("Password is missing error: {} {}", request.getMethod(), request.getRequestURI(), exception);
@@ -100,7 +130,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthenticationFailedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<ErrorResponseDTO> handleException(AuthenticationFailedException exception,
+    public ResponseEntity<ErrorResponseDTO> handleAuthenticationFailedException(AuthenticationFailedException exception,
                                                             HttpServletRequest request) {
         String timestamp = LocalDateTime.now().format(formatter);
         logger.error("Authentication failed error: {} {}", request.getMethod(), request.getRequestURI(), exception);
