@@ -1,8 +1,10 @@
 package com.example.order_service.controller;
 
+import com.example.order_service.client.UserClient;
 import com.example.order_service.dto.request.pickup_point.PickupPointUpdateRequest;
 import com.example.order_service.dto.response.pickup_point.PickupPointForUserResponse;
 import com.example.order_service.dto.response.pickup_point.PickupPointFullDataResponse;
+import com.example.order_service.dto.rest.response.UserResponse;
 import com.example.order_service.model.PickupPoint;
 import com.example.order_service.service.PickupPointService;
 import com.example.order_service.service.mapper.PickupPointMapper;
@@ -16,11 +18,13 @@ import org.springframework.web.bind.annotation.*;
 public class PickupPointController {
     private final PickupPointService pickupPointService;
     private final PickupPointMapper pickupPointMapper;
+    private final UserClient userClient;
 
     @Autowired
-    public PickupPointController(PickupPointService pickupPointService, PickupPointMapper pickupPointMapper) {
+    public PickupPointController(PickupPointService pickupPointService, PickupPointMapper pickupPointMapper, UserClient userClient) {
         this.pickupPointService = pickupPointService;
         this.pickupPointMapper = pickupPointMapper;
+        this.userClient = userClient;
     }
 
     @GetMapping("/full")
@@ -29,7 +33,8 @@ public class PickupPointController {
         PickupPoint pickupPoint = pickupPointService.getFromAuth();
         PickupPointFullDataResponse response = pickupPointMapper.toPickupPointFullDataResponse(pickupPoint);
 
-        // TODO 09.05 сделать получение данных пользователя с сервиса пользователя и добавление их в response
+        UserResponse userResponse = userClient.getUserData().getBody();
+        response.setUserInfo(userResponse);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

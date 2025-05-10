@@ -1,6 +1,7 @@
 package com.example.order_service.dto.response.pickup_point;
 
 import com.example.order_service.dto.response.address.AddressResponse;
+import com.example.order_service.dto.rest.response.UserResponse;
 import lombok.*;
 
 @Setter
@@ -9,9 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class PickupPointFullDataResponse {
-    private String email;
-    private Boolean isActive;
-    private Boolean isLocked;
+    private UserResponse userInfo;
 
     private AddressResponse address;
     private String workingHours;
