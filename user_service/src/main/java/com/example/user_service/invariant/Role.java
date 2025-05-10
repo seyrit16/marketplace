@@ -4,5 +4,6 @@ public enum Role {
     SUPER_ADMIN,
     ADMIN,
     USER,
-    SELLER
+    SELLER,
+    PICKUP_POINT
 }

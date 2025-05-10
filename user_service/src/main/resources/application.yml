@@ -69,3 +69,7 @@ verification:
 seller:
   service:
     url: http://localhost:8084
+
+order:
+  service:
+    url: http://localhost:8086

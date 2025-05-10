@@ -1,12 +1,12 @@
 package com.example.user_service.service.impl;
 
-import com.example.user_service.client.SellerClient;
-import com.example.user_service.dto.auth.request.SignUpSellerRequest;
+import com.example.user_service.client.OrderClient;
+import com.example.user_service.dto.auth.request.SignUpPickupPointRequest;
+import com.example.user_service.exception.OrderClientException;
 import com.example.user_service.exception.PasswordIsMissingException;
-import com.example.user_service.exception.SellerClientException;
 import com.example.user_service.invariant.Role;
 import com.example.user_service.model.User;
-import com.example.user_service.service.SellerService;
+import com.example.user_service.service.PickupPointService;
 import com.example.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,46 +16,46 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class SellerServiceImpl implements SellerService {
+public class PickupPointServiceImpl implements PickupPointService {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final SellerClient sellerClient;
+    private final OrderClient orderClient;
 
     @Autowired
-    public SellerServiceImpl(UserService userService, PasswordEncoder passwordEncoder, SellerClient sellerClient) {
+    public PickupPointServiceImpl(UserService userService, PasswordEncoder passwordEncoder, OrderClient orderClient) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-        this.sellerClient = sellerClient;
+        this.orderClient = orderClient;
     }
 
     @Override
     @Transactional
-    public User register(SignUpSellerRequest dto) {
-        userService.verifyUserExistByEmail(dto.getEmail());
+    public User register(SignUpPickupPointRequest data) {
 
+        userService.verifyUserExistByEmail(data.getEmail());
         User user = new User();
-        user.setEmail(dto.getEmail());
-        Optional.ofNullable(dto.getPassword())
+        user.setEmail(data.getEmail());
+        Optional.ofNullable(data.getPassword())
                 .filter(password -> !password.trim().isEmpty())
                 .map(passwordEncoder::encode)
                 .ifPresentOrElse(user::setPassword, () -> {
                     throw new PasswordIsMissingException("Поле пароль является обязательным");
                 });
-        user.setRole(Role.SELLER);
+        user.setRole(Role.PICKUP_POINT);
         user.setIsActive(true);
         user.setIsLocked(false);
         User savedUser = userService.save(user);
 
-        if(user.getRole().equals(Role.SELLER)){
+        if(user.getRole().equals(Role.PICKUP_POINT)){
             try{
-                dto.getSellerCreateRequest().setId(savedUser.getId());
-                sellerClient.createSeller(
-                        dto.getSellerCreateRequest()
+                data.getPickupPointCreateRequest().setId(savedUser.getId());
+                orderClient.createPickupPoint(
+                        data.getPickupPointCreateRequest()
                 );
             }catch (Exception exception){
                 exception.printStackTrace();
-                throw new SellerClientException("Ошибка при создании продавца.",exception.getCause());
+                throw new OrderClientException("Ошибка при создании пвз.",exception.getCause());
             }
         }
 

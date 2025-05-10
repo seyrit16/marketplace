@@ -1,11 +1,9 @@
 package com.example.user_service.controller;
 
-import com.example.user_service.dto.auth.request.SignInWithCodeRequest;
-import com.example.user_service.dto.auth.request.SignInWithPasswordRequest;
-import com.example.user_service.dto.auth.request.SignUpRequest;
-import com.example.user_service.dto.auth.request.SignUpSellerRequest;
+import com.example.user_service.dto.auth.request.*;
 import com.example.user_service.dto.auth.response.JwtTokenResponse;
 import com.example.user_service.dto.response.Response;
+import com.example.user_service.dto.rest.request.pickup_point.PickupPointCreateRequest;
 import com.example.user_service.invariant.Role;
 import com.example.user_service.service.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,16 +35,22 @@ public class AuthenticationController {
     }
 
     @PostMapping("/sign_up/seller")
-    public ResponseEntity<Void> signUpSeller(@RequestBody SignUpSellerRequest        requestData) {
+    public ResponseEntity<Void> signUpSeller(@RequestBody SignUpSellerRequest requestData) {
 
         authenticationService.signUpSeller(requestData);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/sign_up/pickup_point")
+    public ResponseEntity<Void> signUpPickupPoint(@RequestBody SignUpPickupPointRequest requestData){
+        authenticationService.signUpPickupPoint(requestData);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/sign_in/with_code/user")
     public ResponseEntity<JwtTokenResponse> signInWithCodeUser(@RequestBody SignInWithCodeRequest requestData) {
 
-        String token = authenticationService.signInWithCode(requestData.getEmail(), requestData.getCode(),Role.USER);
+        String token = authenticationService.signInWithCode(requestData.getEmail(), requestData.getCode(), Role.USER);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new JwtTokenResponse(token));
     }
@@ -62,7 +66,7 @@ public class AuthenticationController {
     @PostMapping("/sign_in/with_code/seller")
     public ResponseEntity<JwtTokenResponse> signInWithCodeSeller(@RequestBody SignInWithCodeRequest requestData) {
 
-        String token = authenticationService.signInWithCode(requestData.getEmail(), requestData.getCode(),Role.SELLER);
+        String token = authenticationService.signInWithCode(requestData.getEmail(), requestData.getCode(), Role.SELLER);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new JwtTokenResponse(token));
     }
@@ -72,6 +76,23 @@ public class AuthenticationController {
 
         String token = authenticationService.signInWithPassword(requestData.getEmail(), requestData.getPassword(),
                 Role.SELLER);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new JwtTokenResponse(token));
+    }
+
+    @PostMapping("/sign_in/with_code/pickup_point")
+    public ResponseEntity<JwtTokenResponse> signInWithCodePickupPoint(@RequestBody SignInWithCodeRequest requestData) {
+
+        String token = authenticationService.signInWithCode(requestData.getEmail(), requestData.getCode(), Role.PICKUP_POINT);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new JwtTokenResponse(token));
+    }
+
+    @PostMapping("/sign_in/with_password/pickup_point")
+    public ResponseEntity<JwtTokenResponse> signInWithPasswordPickupPoint(@RequestBody SignInWithPasswordRequest requestData) {
+
+        String token = authenticationService.signInWithPassword(requestData.getEmail(), requestData.getPassword(),
+                Role.PICKUP_POINT);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new JwtTokenResponse(token));
     }
