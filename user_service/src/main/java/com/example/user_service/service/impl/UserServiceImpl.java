@@ -202,7 +202,8 @@ public class UserServiceImpl implements UserService {
     public void delete() {
 
         User user = getUserById(getUserFromAuthentication().getId());
-        userRepository.delete(user);
+        user.setIsActive(false);
+        save(user);
     }
 
     @Override
