@@ -17,7 +17,7 @@ public class PickupPoint {
     @Id
     private UUID id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
@@ -27,7 +27,7 @@ public class PickupPoint {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "add_info")
+    @Column(name = "add_info",columnDefinition = "TEXT")
     private String addInfo;
 
     @OneToMany(mappedBy = "pickupPoint", cascade = CascadeType.PERSIST)
