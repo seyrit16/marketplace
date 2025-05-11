@@ -15,10 +15,14 @@ import com.example.user_service.service.mapper.UserProfileMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/user")
+@Validated
 public class UserController {
 
     private final UserService userService;
@@ -38,33 +42,29 @@ public class UserController {
     public ResponseEntity<UserResponse> getUserData() {
         User user = userService.getUserById(userService.getUserFromAuthentication().getId());
         UserResponse userResponse = userMapper.toUserResponse(user);
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userResponse);
     }
 
     @PutMapping("/update/password")
-    public ResponseEntity<UserResponse> updateUserProfile(@RequestBody UserUpdatePasswordRequest dto) {
+    public ResponseEntity<UserResponse> updateUserPassword(@Valid @RequestBody UserUpdatePasswordRequest dto) {
         User user = userService.updatePassword(dto);
         UserResponse userResponse = userMapper.toUserResponse(user);
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userResponse);
     }
 
     @PutMapping("/update/email")
-    public ResponseEntity<UserResponse> updateUserProfile(@RequestBody UserUpdateEmailRequest dto) {
+    public ResponseEntity<UserResponse> updateUserEmail(@Valid @RequestBody UserUpdateEmailRequest dto) {
         UserResponse userResponse = userService.updateEmail(dto);
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userResponse);
     }
 
     @PutMapping("/update/user_profile")
-    public ResponseEntity<UserProfileResponse> updateUserProfile(@RequestBody UserProfileUpdateRequest dto) {
+    public ResponseEntity<UserProfileResponse> updateUserProfile(@Valid @RequestBody UserProfileUpdateRequest dto) {
         UserProfile userProfile = userProfileService.updateUserProfile(dto);
         UserProfileResponse userProfileResponse = userProfileMapper.toUserProfileDto(userProfile);
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userProfileResponse);
     }
