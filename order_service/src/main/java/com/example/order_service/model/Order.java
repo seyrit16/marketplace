@@ -38,5 +38,5 @@ public class Order {
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime cratedAt;
+    private LocalDateTime createdAt;
 }

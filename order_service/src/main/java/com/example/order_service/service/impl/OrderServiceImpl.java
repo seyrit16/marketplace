@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -68,5 +70,15 @@ public class OrderServiceImpl implements OrderService {
 
         return orderRepository.findById(id)
                 .orElseThrow(()-> new OrderNotFoundException("Заказ не найден."));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Order> getForUserAndStatuses(Collection<OrderItemStatus> statuses) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UUID userid = (UUID) auth.getCredentials();
+
+        return orderRepository.findOrdersByUserIdAndItemStatuses(userid,statuses).get();
     }
 }

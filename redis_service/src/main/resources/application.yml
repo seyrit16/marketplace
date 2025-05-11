@@ -6,12 +6,12 @@ spring:
     name: redis_service
   data:
     redis:
-      host: localhost
+      host: 172.26.175.66
       port: 6379
-      #      password: redispass
+      password: password
       database: 0
   kafka:
-    bootstrap-servers: 192.168.0.106:9092
+    bootstrap-servers: 172.26.175.66:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
