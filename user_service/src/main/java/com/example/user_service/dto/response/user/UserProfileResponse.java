@@ -11,15 +11,12 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @ToString
 public class UserProfileResponse {
-    @NotBlank(message = "Фамилия не должна быть пустой")
     private String surname;
 
-    @NotBlank(message = "Имя не должно быть пустым")
     private String name;
 
     private String patronymic;
 
-    @NotBlank(message = "Номер телефона не должен быть пустым")
     @Pattern(regexp = "\\+?[1-9]\\d{1,14}", message = "Номер телефона должен быть валидным")
     private String phoneNumber;
 }

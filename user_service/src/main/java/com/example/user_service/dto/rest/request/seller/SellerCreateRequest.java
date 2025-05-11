@@ -13,7 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 public class SellerCreateRequest {
-    @NotNull(message = "Идентификатор не должен быть пустым")
     private UUID id;
 
     @NotNull(message = "Данные контактного лица не должны быть пустыми")

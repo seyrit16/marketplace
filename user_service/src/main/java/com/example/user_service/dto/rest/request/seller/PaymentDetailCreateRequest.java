@@ -25,7 +25,6 @@ public class PaymentDetailCreateRequest {
     @NotBlank(message = "Имя владельца счета не должно быть пустым")
     private String accountHolderName;
 
-    @NotBlank(message = "ИНН не должен быть пустым")
     @Pattern(regexp = "\\d{10}|\\d{12}", message = "ИНН должен содержать 10 или 12 цифр")
     private String inn;
 }
