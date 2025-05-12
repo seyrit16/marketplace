@@ -11,10 +11,14 @@ import com.example.order_service.service.mapper.PickupPointMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/pickup_point")
+@Validated
 public class PickupPointController {
     private final PickupPointService pickupPointService;
     private final PickupPointMapper pickupPointMapper;
@@ -28,8 +32,7 @@ public class PickupPointController {
     }
 
     @GetMapping("/full")
-    public ResponseEntity<PickupPointFullDataResponse> getPickupPointFullData(){
-
+    public ResponseEntity<PickupPointFullDataResponse> getPickupPointFullData() {
         PickupPoint pickupPoint = pickupPointService.getFromAuth();
         PickupPointFullDataResponse response = pickupPointMapper.toPickupPointFullDataResponse(pickupPoint);
 
@@ -42,8 +45,7 @@ public class PickupPointController {
     }
 
     @GetMapping("/for_user")
-    public ResponseEntity<PickupPointForUserResponse> getPickupPointForUser(){
-
+    public ResponseEntity<PickupPointForUserResponse> getPickupPointForUser() {
         PickupPoint pickupPoint = pickupPointService.getFromAuth();
         PickupPointForUserResponse response = pickupPointMapper.toPickupPointForUserResponse(pickupPoint);
 
@@ -53,8 +55,7 @@ public class PickupPointController {
     }
 
     @PutMapping
-    public ResponseEntity<PickupPointFullDataResponse> updatePickupPoint(@RequestBody PickupPointUpdateRequest data){
-
+    public ResponseEntity<PickupPointFullDataResponse> updatePickupPoint(@Valid @RequestBody PickupPointUpdateRequest data) {
         PickupPoint pickupPoint = pickupPointService.update(data);
         PickupPointFullDataResponse response = pickupPointMapper.toPickupPointFullDataResponse(pickupPoint);
         return ResponseEntity
