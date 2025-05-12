@@ -1,5 +1,6 @@
 package com.example.order_service.config.security;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,14 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(configurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/pickup_point/for_user/**").hasAuthority("ROLE_USER")
+                        .requestMatchers("/api/pickup_point/**").hasAuthority("ROLE_PICKUP_POINT")
+                        .requestMatchers(HttpMethod.GET,"/api/order/**").authenticated()
+                        .requestMatchers("/api/order/**").hasAuthority("ROLE_USER")
+                        .requestMatchers("/api/order_item/**").permitAll()
+                        .requestMatchers("/api/payment/**").hasAuthority("ROLE_USER")
+                        .requestMatchers("/api/cart/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -1,6 +1,7 @@
 package com.example.user_service.config.security;
 
 import com.example.user_service.config.security.components.JwtAuthenticationFilter;
+import com.example.user_service.invariant.Role;
 import com.example.user_service.service.security.impl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,6 +70,10 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(configurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/user/update/user_profile").hasAuthority(Role.USER.name())
+                        .requestMatchers("/api/user/**").authenticated()
+                        .requestMatchers("/api/card/**").hasAuthority(Role.USER.name())
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

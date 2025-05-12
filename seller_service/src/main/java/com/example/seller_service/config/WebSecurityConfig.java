@@ -50,6 +50,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(configurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/seller/auth/**").permitAll()
                         .requestMatchers("/api/seller/update/**").hasAuthority("ROLE_SELLER")
                         .anyRequest().permitAll()
                 )
