@@ -8,12 +8,16 @@ import com.example.product_service.service.mapper.CategoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/category")
+@Validated
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -26,7 +30,7 @@ public class CategoryController {
     }
 
     @GetMapping()
-    public ResponseEntity<CategoryResponse> getCategoryById(@RequestParam(name = "id") Long id){
+    public ResponseEntity<CategoryResponse> getCategoryById(@Positive(message = "Идентификатор категории должен быть положительным числом") @RequestParam(name = "id") Long id) {
         Category category = categoryService.getCategoryById(id);
         CategoryResponse response = categoryMapper.toCategoryResponse(category);
 
@@ -36,7 +40,7 @@ public class CategoryController {
     }
 
     @GetMapping("/sub")
-    public ResponseEntity<List<CategoryResponse>> getSubcategoriesById(@RequestParam(name = "id") Long id){
+    public ResponseEntity<List<CategoryResponse>> getSubcategoriesById(@Positive(message = "Идентификатор категории должен быть положительным числом") @RequestParam(name = "id") Long id) {
         Category category = categoryService.getCategoryById(id);
         List<CategoryResponse> response = category.getSubcategories()
                 .stream()
@@ -47,14 +51,14 @@ public class CategoryController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> createCategory(@RequestBody CategoryCreateRequest data){
+    public ResponseEntity<Void> createCategory(@Valid @RequestBody CategoryCreateRequest data) {
         categoryService.createCategory(data);
 
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping()
-    public ResponseEntity<Void> deleteCategory(@RequestParam(name = "id") Long id){
+    public ResponseEntity<Void> deleteCategory(@Positive(message = "Идентификатор категории должен быть положительным числом") @RequestParam(name = "id") Long id) {
         categoryService.delete(id);
 
         return ResponseEntity.ok().build();
