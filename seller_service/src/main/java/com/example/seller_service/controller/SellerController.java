@@ -18,10 +18,14 @@ import com.example.seller_service.service.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/seller")
+@Validated
 public class SellerController {
 
     private final SellerService sellerService;
@@ -44,8 +48,7 @@ public class SellerController {
     }
 
     @GetMapping()
-    public ResponseEntity<SellerDataResponse> getSellerData(){
-
+    public ResponseEntity<SellerDataResponse> getSellerData() {
         SellerProfile sellerProfile = sellerService.getSellerProfileFromAuth();
         UserResponse userResponse = userClient.getUserData().getBody();
 
@@ -62,36 +65,29 @@ public class SellerController {
     }
 
     @PostMapping("/auth/create")
-    public ResponseEntity<Void> createSeller(@RequestBody SellerCreateRequest sellerCreateRequest) {
-
+    public ResponseEntity<Void> createSeller(@Valid @RequestBody SellerCreateRequest sellerCreateRequest) {
         sellerService.createSeller(sellerCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/update/seller_profile")
-    public ResponseEntity<SellerProfileResponse> updateSellerProfile(@RequestBody SellerProfileUpdateRequest sellerProfileUpdateRequest) {
-
+    public ResponseEntity<SellerProfileResponse> updateSellerProfile(@Valid @RequestBody SellerProfileUpdateRequest sellerProfileUpdateRequest) {
         SellerProfile sellerProfile = sellerService.updateSellerProfile(sellerProfileUpdateRequest);
-        SellerProfileResponse sellerProfileResponse =
-                sellerMapper.toSellerProfileResponse(sellerProfile);
+        SellerProfileResponse sellerProfileResponse = sellerMapper.toSellerProfileResponse(sellerProfile);
         return ResponseEntity.status(HttpStatus.OK).body(sellerProfileResponse);
     }
 
     @PutMapping("/update/person_detail")
-    public ResponseEntity<PersonDetailResponse> updateSellerPersonDetail(@RequestBody PersonDetailUpdateRequest personDetailUpdateRequest) {
-
+    public ResponseEntity<PersonDetailResponse> updateSellerPersonDetail(@Valid @RequestBody PersonDetailUpdateRequest personDetailUpdateRequest) {
         SellerProfile sellerProfile = sellerService.updateSellerPersonDetail(personDetailUpdateRequest);
-        PersonDetailResponse personDetailResponse =
-                personMapper.toPersonDetailResponse(sellerProfile.getPersonDetail());
+        PersonDetailResponse personDetailResponse = personMapper.toPersonDetailResponse(sellerProfile.getPersonDetail());
         return ResponseEntity.status(HttpStatus.OK).body(personDetailResponse);
     }
 
     @PutMapping("/update/payment_detail")
-    public ResponseEntity<PaymentDetailResponse> updateSellerPaymentDetail(@RequestBody PaymentDetailUpdateRequest paymentDetailUpdateRequest) {
-
+    public ResponseEntity<PaymentDetailResponse> updateSellerPaymentDetail(@Valid @RequestBody PaymentDetailUpdateRequest paymentDetailUpdateRequest) {
         SellerProfile sellerProfile = sellerService.updateSellerPaymentDetail(paymentDetailUpdateRequest);
-        PaymentDetailResponse paymentDetailResponse =
-                paymentDetailMapper.toPaymentDetailResponse(sellerProfile.getPaymentDetail());
+        PaymentDetailResponse paymentDetailResponse = paymentDetailMapper.toPaymentDetailResponse(sellerProfile.getPaymentDetail());
         return ResponseEntity.status(HttpStatus.OK).body(paymentDetailResponse);
     }
 }
