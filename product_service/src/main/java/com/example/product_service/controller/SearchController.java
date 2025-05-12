@@ -7,18 +7,20 @@ import com.example.product_service.service.ProductSearchService;
 import com.example.product_service.service.ProductService;
 import com.example.product_service.service.mapper.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/search")
+@Validated
 public class SearchController {
 
     private final ProductSearchService productSearchService;
@@ -33,9 +35,8 @@ public class SearchController {
     }
 
     @PostMapping("/query")
-    public ResponseEntity<List<ProductResponse>> searchByQuery(@RequestBody ProductSearchRequest data,
-                                                               Pageable pageable
-    ) throws IOException {
+    public ResponseEntity<List<ProductResponse>> searchByQuery(@Valid @RequestBody ProductSearchRequest data,
+                                                               Pageable pageable) throws IOException {
         data.setPageable(pageable);
         List<UUID> productIds = productSearchService.searchIdsByQuery(data);
 

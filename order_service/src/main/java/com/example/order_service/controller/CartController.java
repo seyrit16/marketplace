@@ -7,12 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/cart")
+@Validated
 public class CartController {
     private final CartService cartService;
 
@@ -22,8 +25,7 @@ public class CartController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Void> saveCart(@RequestBody CartRequest cartRequest){
-
+    public ResponseEntity<Void> saveCart(@Valid @RequestBody CartRequest cartRequest) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UUID userId = (UUID) auth.getCredentials();
 
@@ -33,8 +35,7 @@ public class CartController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<CartResponse> getCart(){
-
+    public ResponseEntity<CartResponse> getCart() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UUID userId = (UUID) auth.getCredentials();
 
@@ -44,8 +45,7 @@ public class CartController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteCart(){
-
+    public ResponseEntity<Void> deleteCart() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UUID userId = (UUID) auth.getCredentials();
 
