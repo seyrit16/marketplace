@@ -70,10 +70,10 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(configurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/user/update/user_profile").hasAuthority(Role.USER.name())
-                        .requestMatchers("/api/user").authenticated()
-                        .requestMatchers("/api/card").hasAuthority(Role.USER.name())
+                        .requestMatchers("/api/user/**").authenticated()
+                        .requestMatchers("/api/card/**").hasAuthority(Role.USER.name())
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
