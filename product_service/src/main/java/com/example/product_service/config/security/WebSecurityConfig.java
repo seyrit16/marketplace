@@ -1,9 +1,11 @@
 package com.example.product_service.config.security;
 
+import feign.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -49,6 +51,12 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(configurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/files").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/product/**").permitAll()
+                        .requestMatchers("/api/product/**").hasAuthority("ROLE_SELLER")
+                        .requestMatchers("/api/product_image/**").hasAuthority("ROLE_SELLER")
+                        .requestMatchers("/search/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/category/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
