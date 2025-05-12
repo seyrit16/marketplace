@@ -33,7 +33,7 @@ public class SellerProfile {
     @Column(name = "is_verified",nullable = false)
     private Boolean isVerified=false;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @OneToOne(mappedBy = "seller", cascade = CascadeType.ALL)
