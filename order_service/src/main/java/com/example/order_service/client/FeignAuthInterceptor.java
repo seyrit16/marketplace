@@ -16,7 +16,7 @@ public class FeignAuthInterceptor implements RequestInterceptor {
         if (authentication != null && authentication.getDetails() instanceof Map<?, ?> details) {
             Object tokenObj = details.get("token");
             if (tokenObj instanceof String token) {
-                requestTemplate.header("Authorization", "Bearer " + token);
+                requestTemplate.header("Cookie", "access_token=" + token);
             }
         }
     }

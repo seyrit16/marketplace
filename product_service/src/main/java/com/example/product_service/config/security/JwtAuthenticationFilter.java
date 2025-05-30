@@ -1,8 +1,10 @@
 package com.example.product_service.config.security;
 
 import com.example.product_service.service.JwtService;
+import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,13 +32,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader(HEADER_NAME);
-        if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
+        String token = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("access_token".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (StringUtils.isEmpty(token)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authHeader.substring(7);
         if (!jwtService.validateToken(token)) {
             filterChain.doFilter(request, response);
             return;
