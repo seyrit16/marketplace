@@ -26,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
@@ -116,6 +117,7 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.USER);
         user.setIsActive(true);
         user.setIsLocked(false);
+        user.setCreatedAt(LocalDateTime.now());
         User savedUser = null;
 
         if(user.getRole().equals(Role.USER)){
