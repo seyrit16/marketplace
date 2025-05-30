@@ -8,9 +8,10 @@ import org.mapstruct.*;
 
 import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {UserProfileMapper.class})
 public interface UserMapper {
 
+    @Mapping(source = "userProfile", target = "userProfile")
     UserResponse toUserResponse(User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = IGNORE)
