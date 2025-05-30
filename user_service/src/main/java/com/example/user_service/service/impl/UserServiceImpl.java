@@ -129,6 +129,7 @@ public class UserServiceImpl implements UserService {
                     .cards(new ArrayList<>())
                     .defaultPickupPointId(null)
                     .build();
+            user.setUserProfile(userProfile);
             savedUser = saveUserProfile(userProfile).getUser();
         }
 
