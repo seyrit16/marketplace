@@ -13,7 +13,7 @@ public class ElasticsearchConfig {
     public RestHighLevelClient client() {
         return new RestHighLevelClient(
                 RestClient.builder(
-                        new HttpHost("172.26.175.66", 9200, "http") // Укажите адрес вашего Elasticsearch сервера
+                        new HttpHost("172.26.175.66", 9200, "http")
                 )
         );
     }
